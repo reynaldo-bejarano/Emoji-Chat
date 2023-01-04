@@ -1,0 +1,43 @@
+.container {
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 16px;
+}
+
+.containerEmoji {
+    padding: 10px;
+    background-color: gainsboro;
+    border-radius: 16px;
+}
+
+.textInput {
+    width: calc(100% - 32px);
+    padding: 8px 16px;
+    background-color: black;
+    color: #fff;
+    border-radius: 16px;
+    border: none;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.containerBtnEmojis {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.btnEmojis {
+    background-color: transparent;
+    border: none;
+}
+
+@media only screen and (min-width: 920px) {
+    .container {
+        margin-top: 16px;
+        width: 30%;
+    }
+
+    .textInput {
+        padding: 12px 16px;
+    }
+}
