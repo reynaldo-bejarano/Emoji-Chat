@@ -30,7 +30,10 @@
     background-color: transparent;
     border: none;
 }
-
+.loading{
+    text-align: center;
+    padding: 20px;
+}
 @media only screen and (min-width: 920px) {
     .container {
         margin-top: 16px;

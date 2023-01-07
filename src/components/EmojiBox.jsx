@@ -1,45 +1,41 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { AppContext } from '../context/AppProvider.jsx'
+import useFetch from '../hooks/useFetch.js';
 import styles from "./EmojiBox.module.css"
 
+
 const EmojiBox = () => {
-  const { emojiBoxIsOpen, setTextInput, inputRef } = useContext(AppContext);
-  const [emojiList, setEmojiList] = useState([]);
-  const [emojiListAll, setEmojiListAll] = useState([]);
+  const { emojiBoxIsOpen, inputRef, setTextInput } = useContext(AppContext);
+  const { emojiList, isLoading, error } = useFetch();
+  const [emojiListFilter, setEmojiListFilter] = useState(null);
 
-  useEffect(() => {
-    getEmojiList();
-  }, [])
-
-
-  const getEmojiList = async () => {
-    const data = await fetch(import.meta.env.VITE_API_URL);
-    const json = await data.json();
-    setEmojiList(json);
-    setEmojiListAll(json);
-  }
-
-  const handleChange = (e) => {
-    const text = e.target.value.toLowerCase();
-    if (!!text) {
-      const data = emojiList.filter(item => item.slug.includes(text) || item.slug.includes(text))
-      return setEmojiList(data)
-    }
-    return setEmojiList(emojiListAll);
-  }
 
   const handleClickEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
     const text = inputRef.current.value;
     const prev = text.slice(0, cursorPos);
     const next = text.slice(cursorPos);
-
     setTextInput(prev + emoji + next);
     inputRef.current.value = prev + emoji + next;
     inputRef.current.selectionStart = cursorPos + emoji.length;
     inputRef.current.selectionEnd = cursorPos + emoji.length;
     inputRef.current.focus();
   }
+
+  const handleChange = (e) => {
+    const text = e.target.value.toLowerCase();
+    if (!!text) {
+      const data = emojiList.filter(item => item.slug.includes(text) || item.slug.includes(text));
+      return setEmojiListFilter(data)
+    }
+    return setEmojiListFilter(null)
+  }
+
+  if (isLoading) return <div className={styles.loading}>Cargando...</div>
+
+
+  if (error) return <div className={styles.loading}>Error de carga</div>
+
 
   return (
     <>
@@ -52,15 +48,27 @@ const EmojiBox = () => {
               onChange={handleChange}
             />
             <div className={styles.containerBtnEmojis}>
-              {emojiList.map(item =>
-                <button
-                  onClick={() => handleClickEmoji(item.character)}
-                  className={styles.btnEmojis}
-                  key={item.slug}
-                >
-                  {item.character}
-                </button>
-              )}
+              {
+                emojiListFilter ?
+                  emojiListFilter.map(item =>
+                    <button
+                      onClick={() => handleClickEmoji(item.character)}
+                      className={styles.btnEmojis}
+                      key={item.slug}
+                    >
+                      {item.character}
+                    </button>
+                  )
+                  : emojiList.map(item =>
+                    <button
+                      onClick={() => handleClickEmoji(item.character)}
+                      className={styles.btnEmojis}
+                      key={item.slug}
+                    >
+                      {item.character}
+                    </button>
+                  )
+              }
             </div>
           </div>
         </div>
